@@ -1,11 +1,11 @@
-package io.github.mat3e;
+package io.github.mat3e.lang;
 
-import javax.swing.text.html.Option;
-import java.util.ArrayList;
+import io.github.mat3e.HibernateUtil;
+
 import java.util.List;
 import java.util.Optional;
 
-class LangRepository {
+public class LangRepository {
 //    private List<Lang> languages;
 //
 //    LangRepository() {
@@ -14,13 +14,24 @@ class LangRepository {
 //        languages.add(new Lang(2, "Siemanko", "pl"));
 //    }
 
-    Optional<Lang> findById(Integer id) {
+    List<Lang> findAll() {
         var session = HibernateUtil.getSessionFactory().openSession();
         var transaction = session.beginTransaction();
-        var result = session.get(Lang.class, id);
+
+        var result = session.createQuery("from Lang", Lang.class).list();
+
         transaction.commit();
         session.close();
-        return Optional.ofNullable(result);
+        return result;
+
+    }
+    public Optional<Lang> findById(Integer id) {
+        var session = HibernateUtil.getSessionFactory().openSession();
+        var transaction = session.beginTransaction();
+        var result = Optional.ofNullable(session.get(Lang.class, id));
+        transaction.commit();
+        session.close();
+        return result;
 
 //        return languages.stream()
 //                .filter(l -> l.getId().equals(id))
